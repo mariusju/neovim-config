@@ -14,17 +14,21 @@
    Plug 'raimondi/delimitmate'
    Plug 'chrisbra/colorizer'
    Plug 'tpope/vim-fugitive'
-   " Plug 'pseewald/vim-anyfold'
    Plug 'jremmen/vim-ripgrep'
    Plug 'easymotion/vim-easymotion'
-
    Plug 'leafgarland/typescript-vim'
    Plug 'peitalin/vim-jsx-typescript'
+   Plug 'reasonml-editor/vim-reason-plus'
+   Plug 'itchyny/vim-qfedit'
+   Plug 'autozimu/LanguageClient-neovim', {
+     \ 'branch': 'next',
+     \ 'do': 'bash install.sh',
+      \ }
  catch
  endtry
 
 
- call plug#end()
+call plug#end()
 
 colorscheme iceberg
 set nocompatible
@@ -36,6 +40,9 @@ syntax enable
 set nobackup
 set nowritebackup
 set shortmess+=c
+
+" You will have bad experience for diagnostic messages when it's default 4000.
+set updatetime=300
 
 set completeopt-=preview
 
@@ -81,7 +88,6 @@ nnoremap <S-k> :bnext!<CR>
 
 nmap <Leader>n :NERDTreeFind<CR>
 nmap <Leader>j k:join<CR>
-nmap <Leader>gp :ALEFix<CR>
 
 :set tabstop=2 shiftwidth=2 expandtab
 :set listchars=tab:!·,trail:·
@@ -147,6 +153,9 @@ inoremap <expr> <TAB> pumvisible() ? "\<C-y>" : "\<TAB>"
 
 autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
 set path=.,src,node_nodules
 set suffixesadd=.js,.jsx
 
@@ -157,7 +166,8 @@ let $FZF_DEFAULT_OPTS='--layout=reverse'
 nnoremap <leader>b :Buffers<CR>
 
 let g:buftabline_show = 2
-let g:NERDTreeWinSize=50
+let g:NERDTreeWinSize=65
+let g:NERDTreeWinPos="left"
 let g:NERDTreeQuitOnOpen=0
 let g:NERDTreeMinimalUI=1
 
@@ -178,11 +188,15 @@ let delimitMate_smart_quotes = 1     " Turns on/off the "smart quotes" feature.
 
 " linting config
 let g:jsx_ext_required = 0
+
+
 let g:ale_linters = {
 \   'javascript': ['eslint'],
-\   'typescript': ['eslint'],
+\   'typescript': ['prettier'],
 \}
 
+
+" tslint is deprecated!
 let g:ale_fixers = {
 \   'javascript': ['prettier', 'eslint'],
 \   'typescript': ['prettier', 'eslint'],
@@ -194,19 +208,35 @@ let g:ale_sign_error = '✘'
 let g:ale_sign_warning = '⚠'
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_text_changed = 'never'
-" highlight ALEErrorSign ctermbg=NONE ctermfg=red
-" highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
 let g:ale_linters_explicit = 1
 let g:ale_lint_on_save = 1
 let g:ale_fix_on_save = 0
+
 let g:ale_javascript_prettier_options = '--print-width 80 --no-semi --single-quote --trailing-comma none'
 let g:ale_typescript_prettier_options = '--print-width 80 --single-quote'
+
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
-"uncomment when ale is installed
+nmap <silent> gt <Plug>(coc-references)
+
+nnoremap <silent><leader>k :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+nmap <leader>rn <Plug>(coc-rename)
+
+nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+
+command! -nargs=0 Format :call CocAction('format')
+nmap <Leader>gp :Format<cr>
 
 map  f <Plug>(easymotion-bd-f)
 nnoremap gr :Rg <cword><cr>
