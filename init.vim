@@ -1,6 +1,6 @@
  call plug#begin()
  try
-   Plug 'scrooloose/nerdtree'
+   " Plug 'scrooloose/nerdtree'
    Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
    Plug 'cocopon/iceberg.vim'
    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -24,6 +24,7 @@
      \ 'branch': 'next',
      \ 'do': 'bash install.sh',
       \ }
+   Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
  catch
  endtry
 
@@ -48,8 +49,8 @@ set completeopt-=preview
 
 set diffopt+=vertical
 
-nnoremap <C-\> :NERDTreeToggle<CR>
-inoremap <C-\> <ESC>:NERDTreeToggle<CR>
+" nnoremap <C-\> :NERDTreeToggle<CR>
+" inoremap <C-\> <ESC>:NERDTreeToggle<CR>
 
 
 let g:rg_command = 'rg --vimgrep'
@@ -86,13 +87,15 @@ nnoremap <S-k> :bnext!<CR>
 "nnoremap <C-N> :bnext<CR>
 "nnoremap <C-P> :bprev<CR>
 
-nmap <Leader>n :NERDTreeFind<CR>
+" nmap <Leader>n :NERDTreeFind<CR>
+nmap <Leader>n :CocCommand explorer<CR>
+nmap <C-\> :CocCommand explorer<CR>
 nmap <Leader>j k:join<CR>
 
 :set tabstop=2 shiftwidth=2 expandtab
 :set listchars=tab:!·,trail:·
 
-let NERDTreeShowBookmarks=1
+" let NERDTreeShowBookmarks=1
 
 set incsearch         " search as characters are entered
 set hlsearch          " highligh search results
@@ -166,10 +169,10 @@ let $FZF_DEFAULT_OPTS='--layout=reverse'
 nnoremap <leader>b :Buffers<CR>
 
 let g:buftabline_show = 2
-let g:NERDTreeWinSize=65
-let g:NERDTreeWinPos="left"
-let g:NERDTreeQuitOnOpen=0
-let g:NERDTreeMinimalUI=1
+" let g:NERDTreeWinSize=50
+" let g:NERDTreeWinPos="left"
+" let g:NERDTreeQuitOnOpen=0
+" let g:NERDTreeMinimalUI=1
 
 " == junegunn/fzf ==
 nnoremap <C-P> :FZF<CR>
@@ -244,6 +247,14 @@ nnoremap <leader>fj :%!python -m json.tool
 
 nnoremap glog yiwoconsole.log('<c-r>"', <C-r>")<Esc>
 nnoremap glos yiwoconsole.log(JSON.stringify(<C-r>", null, 2))<Esc>
+nnoremap gloc oconsole.log('')<Left><Left>
 
 " set filetypes as typescript.tsx
 autocmd BufNewFile,BufRead *.tsx set filetype=typescript.tsx
+
+:command! -complete=file -nargs=1 Rpdf :r !pdftotext -nopgbrk <q-args> -
+
+set autoread
+autocmd FocusGained * :checktime
+
+:set clipboard=unnamedplus
