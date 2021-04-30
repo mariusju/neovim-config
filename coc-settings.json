@@ -11,7 +11,7 @@
   "coc.preferences.hoverTarget": "float",
   "coc.preferences.useQuickfixForLocations": true,
   "coc.preferences.colorSupport": false,
-  "eslint.filetypes": ["javascript", "javascriptreact"],
+  "eslint.filetypes": ["javascript", "javascriptreact", "typescript"],
   "explorer.sources": [
     {
       "name": "file",

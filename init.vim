@@ -113,8 +113,9 @@ nnoremap E $
 vnoremap B ^
 vnoremap E $
 
-nnoremap <silent><leader>w :wa!<CR>
+nnoremap <leader>w :wa!<CR>
 nnoremap <leader>x :bd!<CR>
+nnoremap <leader>xx :bd!<CR>
 nnoremap <leader>xa :bd *<C-a><CR>
 
 nnoremap <leader>z za
@@ -175,8 +176,8 @@ let g:buftabline_show = 2
 " let g:NERDTreeMinimalUI=1
 
 " == junegunn/fzf ==
-nnoremap <C-P> :FZF<CR>
-inoremap <C-P> <ESC>:FZF<CR>i
+" nnoremap <C-P> :FZF<CR>
+" inoremap <C-P> <ESC>:FZF<CR>i
 
 "overwriting buftabline colors
 hi link BufTabLineCurrent CursorLineNr
@@ -240,6 +241,7 @@ nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
 
 command! -nargs=0 Format :call CocAction('format')
 nmap <Leader>gp :Format<cr>
+nmap <Leader>gc :coca<tab><cr>
 
 map  f <Plug>(easymotion-bd-f)
 nnoremap gr :Rg <cword><cr>
@@ -258,3 +260,14 @@ set autoread
 autocmd FocusGained * :checktime
 
 :set clipboard=unnamedplus
+
+let g:coc_global_extensions = ['coc-explorer', 'coc-json', 'coc-prettier', 'coc-eslint', 'coc-tsserver', 'coc-fish', 'coc-css']
+
+:set foldmethod=syntax
+:set foldlevel=20
+
+nnoremap <leader>c viw:s/_\([a-z]\)/\u\1/g<CR>
+set noswapfile
+
+nmap <Leader>i O//@ts-ignore FIXME<Esc>
+nmap <Leader>I O{/*@ts-ignore FIXME*/<Esc>
