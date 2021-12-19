@@ -2,28 +2,18 @@
  try
    Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
    Plug 'cocopon/iceberg.vim'
-   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
    Plug 'junegunn/fzf.vim'
    Plug 'ap/vim-buftabline'
    Plug 'tpope/vim-surround'
    Plug 'tpope/vim-commentary'
-   Plug 'mxw/vim-jsx'
    Plug 'pangloss/vim-javascript'
-   Plug 'w0rp/ale'
-   Plug 'raimondi/delimitmate'
-   Plug 'chrisbra/colorizer'
-   Plug 'tpope/vim-fugitive'
-   Plug 'jremmen/vim-ripgrep'
-   Plug 'easymotion/vim-easymotion'
    Plug 'leafgarland/typescript-vim'
-   Plug 'peitalin/vim-jsx-typescript'
-   Plug 'reasonml-editor/vim-reason-plus'
+   Plug 'MaxMEllon/vim-jsx-pretty' 
+   Plug 'raimondi/delimitmate'
+   Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+   Plug 'easymotion/vim-easymotion'
    Plug 'itchyny/vim-qfedit'
-   Plug 'autozimu/LanguageClient-neovim', {
-     \ 'branch': 'next',
-     \ 'do': 'bash install.sh',
-      \ }
-   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
  catch
  endtry
 
@@ -37,6 +27,8 @@ filetype plugin indent on
 syntax enable
 
 
+let g:coc_global_extensions = ['coc-explorer', 'coc-json', 'coc-prettier', 'coc-eslint', 'coc-tsserver', 'coc-fish', 'coc-css']
+
 set nobackup
 set nowritebackup
 set shortmess+=c
@@ -48,11 +40,7 @@ set completeopt-=preview
 
 set diffopt+=vertical
 
-" nnoremap <C-\> :NERDTreeToggle<CR>
-" inoremap <C-\> <ESC>:NERDTreeToggle<CR>
-
-
-let g:rg_command = 'rg --vimgrep'
+" let g:rg_command = 'rg --vimgrep'
 let g:rg_highlight = 1 "true if you want matches highlighted
 let g:rg_derive_root = 1 "true if you want to find project root from cwd
 let g:rg_format = '%f:%l:%m'
@@ -60,7 +48,7 @@ let g:rg_format = '%f:%l:%m'
 " UI
 set vb t_vb=          " disbale visual bell
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
- set termguicolors
+set termguicolors
 
 set number            " show line numbers
 set cursorline        " highlight current line
@@ -69,6 +57,18 @@ set scrolloff=5       " start scolling lines 5 from top or bottom
 set signcolumn=yes
 
 let mapleader=","
+
+"overwriting colors
+hi link BufTabLineCurrent CursorLineNr
+hi link BufTabLineActive LineNr
+hi link BufTabLineHidden LineNr
+hi link BufTabLineFill LineKr
+hi CocErrorSign guifg=#e27878 guibg=#1e2132
+hi CocInfoSign guifg=#e2a478 guibg=#1e2132
+hi CocWarningSign guifg=#e2a478 guibg=#1e2132
+hi CocInfoSign guifg=#e2a478 guibg=#1e2132
+hi link CocErrorHighlight SpellBad
+hi! clear CocUnderline
 
 " Clear highlighting on escape in normal mode
 nnoremap <esc> :noh<return><esc>
@@ -93,8 +93,6 @@ nmap <Leader>j k:join<CR>
 
 :set tabstop=2 shiftwidth=2 expandtab
 :set listchars=tab:!·,trail:·
-
-" let NERDTreeShowBookmarks=1
 
 set incsearch         " search as characters are entered
 set hlsearch          " highligh search results
@@ -147,7 +145,6 @@ vnoremap <leader>P "+P
 " snippets
 nnoremap <leader>anp ddOawait new Promise(resolve => setTimeout(resolve, 9999999))<ESC>
 
-" let g:tsuquyomi_disable_quickfix = 1
 let g:python2_host_prog = '/usr/bin/python'
 let g:python3_host_prog = '/usr/bin/python3'
 
@@ -169,20 +166,7 @@ let $FZF_DEFAULT_OPTS='--layout=reverse'
 nnoremap <leader>b :Buffers<CR>
 
 let g:buftabline_show = 2
-" let g:NERDTreeWinSize=50
-" let g:NERDTreeWinPos="left"
-" let g:NERDTreeQuitOnOpen=0
-" let g:NERDTreeMinimalUI=1
 
-" == junegunn/fzf ==
-" nnoremap <C-P> :FZF<CR>
-" inoremap <C-P> <ESC>:FZF<CR>i
-
-"overwriting buftabline colors
-hi link BufTabLineCurrent CursorLineNr
-hi link BufTabLineActive LineNr
-hi link BufTabLineHidden LineNr
-hi link BufTabLineFill LineNr
 
 let g:delimitMate_expand_cr = 2        " Turns on/off the expansion of <CR>.
 let g:delimitMate_expand_space = 1     " Turns on/off the expansion of <Space>.
@@ -193,41 +177,15 @@ let delimitMate_smart_quotes = 1     " Turns on/off the "smart quotes" feature.
 let g:jsx_ext_required = 0
 
 
-let g:ale_linters = {
-\   'javascript': ['eslint'],
-\   'typescript': ['prettier'],
-\}
-
-
-" tslint is deprecated!
-let g:ale_fixers = {
-\   'javascript': ['prettier', 'eslint'],
-\   'typescript': ['prettier', 'eslint'],
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
-\}
-
-let g:ale_completion_enabled = 0
-let g:ale_sign_error = '✘'
-let g:ale_sign_warning = '⚠'
-let g:ale_lint_on_enter = 0
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_linters_explicit = 1
-let g:ale_lint_on_save = 1
-let g:ale_fix_on_save = 0
-
-let g:ale_javascript_prettier_options = '--print-width 80 --no-semi --single-quote --trailing-comma none'
-let g:ale_typescript_prettier_options = '--print-width 80 --single-quote'
-
-
-
-
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gt <Plug>(coc-references)
 
+
 nnoremap <silent><leader>k :call <SID>show_documentation()<CR>
+
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
@@ -237,15 +195,16 @@ function! s:show_documentation()
 endfunction
 
 nmap <leader>rn <Plug>(coc-rename)
+nmap <leader>do <Plug>(coc-codeaction-cursor)
 
 nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
 
-command! -nargs=0 Format :call CocAction('format')
+command! -nargs=0 Format :CocCommand prettier.formatFile
 nmap <Leader>gp :Format<cr>
 nmap <Leader>gc :coca<tab><cr>
 
-map  f <Plug>(easymotion-bd-f)
-nnoremap gr :Rg <cword><cr>
+map f <Plug>(easymotion-bd-f)
+nnoremap gr yiw:Rg <c-r>"<cr>
 nnoremap <leader>fj :%!python -m json.tool
 
 nnoremap glog yiwoconsole.log('<c-r>"', <C-r>")<Esc>
@@ -262,28 +221,12 @@ autocmd FocusGained * :checktime
 
 :set clipboard=unnamedplus
 
-let g:coc_global_extensions = ['coc-explorer', 'coc-json', 'coc-prettier', 'coc-eslint', 'coc-tsserver', 'coc-fish', 'coc-css']
-
 :set foldmethod=syntax
 :set foldlevel=20
 
-" snake to camel
-nnoremap <leader>c viw:s/_\([a-z]\)/\u\1/g<CR>
 set noswapfile
 
 nmap <Leader>i O//@ts-ignore FIXME<Esc>
 nmap <Leader>I O{/*@ts-ignore FIXME*/<Esc>
 
-lua <<EOF
-require'nvim-treesitter.configs'.setup {
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = '<CR>',
-      scope_incremental = '<CR>',
-      node_incremental = '<TAB>',
-      node_decremental = '<S-TAB>',
-    },
-  },
-}
-EOF
+
