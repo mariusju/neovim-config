@@ -1,6 +1,5 @@
  call plug#begin()
  try
-   " Plug 'scrooloose/nerdtree'
    Plug 'neoclide/coc.nvim', {'do': './install.sh nightly'}
    Plug 'cocopon/iceberg.vim'
    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -24,7 +23,7 @@
      \ 'branch': 'next',
      \ 'do': 'bash install.sh',
       \ }
-   Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
+   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
  catch
  endtry
 
@@ -220,6 +219,8 @@ let g:ale_javascript_prettier_options = '--print-width 80 --no-semi --single-quo
 let g:ale_typescript_prettier_options = '--print-width 80 --single-quote'
 
 
+
+
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
@@ -266,8 +267,23 @@ let g:coc_global_extensions = ['coc-explorer', 'coc-json', 'coc-prettier', 'coc-
 :set foldmethod=syntax
 :set foldlevel=20
 
+" snake to camel
 nnoremap <leader>c viw:s/_\([a-z]\)/\u\1/g<CR>
 set noswapfile
 
 nmap <Leader>i O//@ts-ignore FIXME<Esc>
 nmap <Leader>I O{/*@ts-ignore FIXME*/<Esc>
+
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = '<CR>',
+      scope_incremental = '<CR>',
+      node_incremental = '<TAB>',
+      node_decremental = '<S-TAB>',
+    },
+  },
+}
+EOF
